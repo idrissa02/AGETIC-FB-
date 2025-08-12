@@ -168,6 +168,8 @@ public class Application {
         return Objects.hash(id);
     }
 
+    
+
     // --- toString ---
     @Override
     public String toString() {
