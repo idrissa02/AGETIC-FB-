@@ -17,7 +17,7 @@
     <description>Civil service competition application interface project</description>
 
     <properties>
-        <java.version>23</java.version>
+        <java.version>17</java.version>
     </properties>
 
     <dependencies>
@@ -81,6 +81,12 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+    <groupId>jakarta.validation</groupId>
+    <artifactId>jakarta.validation-api</artifactId>
+    <version>3.0.2</version>
+</dependency>
     </dependencies>
 
     <build>
