@@ -1,10 +1,11 @@
-package com.AGETIC.Civil_service_competition.services;
+package com.AGETIC.Civil_service_competition.service;
 
 import com.AGETIC.Civil_service_competition.dto.ClassroomCreateRequest;
 import com.AGETIC.Civil_service_competition.dto.ClassroomResponse;
 import java.util.List;
 
 public interface ClassroomService {
+    
     List<ClassroomResponse> getAllClassrooms();
     ClassroomResponse getClassroomById(Long id);
     ClassroomResponse addClassroom(ClassroomCreateRequest request);

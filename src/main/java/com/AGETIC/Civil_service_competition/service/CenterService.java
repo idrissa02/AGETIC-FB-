@@ -1,4 +1,4 @@
-package com.AGETIC.Civil_service_competition.services;
+package com.AGETIC.Civil_service_competition.service;
 
 import com.AGETIC.Civil_service_competition.dto.CenterCreateRequest;
 import com.AGETIC.Civil_service_competition.dto.CenterResponse;

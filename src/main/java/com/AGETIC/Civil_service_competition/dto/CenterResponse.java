@@ -1,10 +1,7 @@
 package com.AGETIC.Civil_service_competition.dto;
 
-import lombok.Data;
-
-@Data
-public class CenterResponse {
-    private Long id;
-    private String name;
-    private String location;
-}
+public record CenterResponse(
+    Long id,
+    String name,
+    String location
+) {}

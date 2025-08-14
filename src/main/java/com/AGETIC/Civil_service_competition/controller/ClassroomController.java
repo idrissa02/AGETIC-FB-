@@ -2,13 +2,16 @@ package com.AGETIC.Civil_service_competition.controller;
 
 import com.AGETIC.Civil_service_competition.dto.ClassroomCreateRequest;
 import com.AGETIC.Civil_service_competition.dto.ClassroomResponse;
-import com.AGETIC.Civil_service_competition.services.ClassroomService;
+import com.AGETIC.Civil_service_competition.service.ClassroomService;
+
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/classrooms")
 public class ClassroomController {
+
     private final ClassroomService classroomService;
 
     public ClassroomController(ClassroomService classroomService) {
@@ -37,6 +40,5 @@ public class ClassroomController {
 
     @DeleteMapping("/{id}")
     public void deleteClassroom(@PathVariable Long id) {
-        classroomService.deleteClassroom(id);
+        classroomService.deleteClassroom(id);}
     }
-}
