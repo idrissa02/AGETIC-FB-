@@ -2,7 +2,6 @@ package com.AGETIC.Civil_service_competition.service.impl;
 
 import com.AGETIC.Civil_service_competition.dto.ClassroomCreateRequest;
 import com.AGETIC.Civil_service_competition.dto.ClassroomResponse;
-// import com.AGETIC.Civil_service_competition.model.Center;
 import com.AGETIC.Civil_service_competition.model.Classroom;
 import com.AGETIC.Civil_service_competition.repository.CenterRepository;
 import com.AGETIC.Civil_service_competition.repository.ClassroomRepository;

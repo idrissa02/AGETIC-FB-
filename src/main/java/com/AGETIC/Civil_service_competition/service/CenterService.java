@@ -5,6 +5,7 @@ import com.AGETIC.Civil_service_competition.dto.CenterResponse;
 import java.util.List;
 
 public interface CenterService {
+    
     List<CenterResponse> getAllCenters();
     CenterResponse getCenterById(Long id);
     CenterResponse addCenter(CenterCreateRequest request);
