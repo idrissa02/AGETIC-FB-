@@ -9,8 +9,10 @@ public interface TestRepository extends JpaRepository<Test, Long> {
     boolean existsByExamIdAndTitleIgnoreCaseAndIdNot(Long examId, String title, Long id);
 
     List<Test> findByTitleContainingIgnoreCase(String titlePart);
+    long countByExamId(Long examId);
     List<Test> findByExamId(Long examId);
     List<Test> findByExamIdAndTitleContainingIgnoreCase(Long examId, String titlePart);
+    
 }
 
 

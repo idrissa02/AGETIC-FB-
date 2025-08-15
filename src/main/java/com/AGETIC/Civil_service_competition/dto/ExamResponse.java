@@ -11,5 +11,6 @@ public record ExamResponse(
         Integer quota,
         Integer hours,
         Long categoryId,
-        Long createdByAdminId
+        Long createdByAdminId,
+        Integer testsCount
 ) {}

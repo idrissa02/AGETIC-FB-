@@ -136,7 +136,8 @@ public class ExamServiceImpl implements ExamService {
                 e.getQuota(),
                 e.getHours(),
                 e.getCategory() != null ? e.getCategory().getId() : null,
-                e.getCreatedBy() != null ? e.getCreatedBy().getId() : null
+                e.getCreatedBy() != null ? e.getCreatedBy().getId() : null,
+                e.getTests() != null ? e.getTests().size() : 0
         );
     }
 }
