@@ -1,6 +1,8 @@
 package com.AGETIC.Civil_service_competition.service.impl;
 
 import java.io.IOException;
+import java.security.SecureRandom;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.springframework.data.domain.Page;
@@ -9,14 +11,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-
 import com.AGETIC.Civil_service_competition.dto.ApplicationCreateRequest;
 import com.AGETIC.Civil_service_competition.dto.ApplicationResponse;
 import com.AGETIC.Civil_service_competition.dto.StatusResponse;
 import com.AGETIC.Civil_service_competition.Enum.ApplicationStatus;
+import com.AGETIC.Civil_service_competition.Enum.CandidateStatus;
 import com.AGETIC.Civil_service_competition.model.Application;
+import com.AGETIC.Civil_service_competition.model.Candidate;
 import com.AGETIC.Civil_service_competition.model.Exam;
 import com.AGETIC.Civil_service_competition.repository.ApplicationRepository;
+import com.AGETIC.Civil_service_competition.repository.CandidateRepository;
 import com.AGETIC.Civil_service_competition.repository.ExamRepository;
 import com.AGETIC.Civil_service_competition.service.ApplicationService;
 import com.AGETIC.Civil_service_competition.service.FileStorageService;
@@ -28,18 +32,22 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final ApplicationRepository applicationRepository;
     private final ExamRepository examRepository;
     private final FileStorageService storage;
+    private final CandidateRepository candidateRepo;
 
-    //constructor
+    // SecureRandom is used to generate random numbers for candidate number generation
+    private static final SecureRandom RNG = new SecureRandom();
 
+    //  constructor
     public ApplicationServiceImpl(ApplicationRepository applicationRepository,
             ExamRepository examRepository,
-            FileStorageService storage) {
+            FileStorageService storage,
+            CandidateRepository candidateRepo) {
         this.applicationRepository = applicationRepository;
         this.examRepository = examRepository;
         this.storage = storage;
+        this.candidateRepo = candidateRepo;
     }
 
-   
     @Override
     public ApplicationResponse create(ApplicationCreateRequest req) {
         Exam exam = examRepository.findById(req.examId())
@@ -92,9 +100,22 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public void validate(Long applicationId) {
-        Application a = byId(applicationId);
-        a.setStatus(ApplicationStatus.ACCEPTED);
+    public void validateAndCreateCandidate(Long applicationId) {
+
+        Application app = byId(applicationId);           // application validation and candidate creation process
+        if (app.getStatus() == ApplicationStatus.ACCEPTED) {
+            return; // idempotent
+        }
+        app.setStatus(ApplicationStatus.ACCEPTED);
+
+        // if candidate already exists, skip
+        if (candidateRepo.findByApplicationId(app.getId()).isEmpty()) {
+            Candidate c = new Candidate();
+            c.setApplication(app);
+            c.setStatus(CandidateStatus.PENDING);
+            c.setCandidateNumber(generateCandidateNumber(app)); // see below (Helpers)
+            candidateRepo.save(c);
+        }
     }
 
     @Override
@@ -128,4 +149,25 @@ public class ApplicationServiceImpl implements ApplicationService {
                 a.getCreatedAt()
         );
     }
+
+    private String generateCandidateNumber(Application app) {
+        int yy = LocalDate.now().getYear() % 100;
+        String n = init(app.getName());
+        String s = init(app.getSurname());
+        String prefix = "ML" + String.format("%02d", yy) + n + s;
+
+        for (int i = 0; i < 10; i++) {
+            String rand6 = String.format("%06d", RNG.nextInt(1_000_000));
+            String code = prefix + rand6;              // e.g., ML25ID000335
+            if (!candidateRepo.existsByCandidateNumber(code)) {
+                return code;
+            }
+        }
+        throw new IllegalStateException("Cannot generate unique candidate number");
+    }
+
+    private String init(String x) {
+        return (x == null || x.isBlank()) ? "X" : x.trim().substring(0, 1).toUpperCase();
+    }
+
 }

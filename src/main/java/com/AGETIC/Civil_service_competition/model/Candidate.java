@@ -23,6 +23,9 @@ public class Candidate {
     @Column(name = "status", nullable = false, length = 20)
     private CandidateStatus status = CandidateStatus.PENDING;
 
+    @Column(name = "candidate_number", nullable = false, unique = true, length = 30)
+    private String candidateNumber ;// unique code for each candidate    
+
     // Each candidate comes from exactly one application (FK in candidates table)
     @OneToOne(optional = false)
     @JoinColumn(name = "application_id", nullable = false, unique = true)
@@ -51,6 +54,9 @@ public class Candidate {
 
     public CandidateStatus getStatus() { return status; }
     public void setStatus(CandidateStatus status) { this.status = status; }
+
+    public String getCandidateNumber() { return candidateNumber; }
+    public void setCandidateNumber(String candidateNumber) { this.candidateNumber = candidateNumber; }
 
     public Application getApplication() { return application; }
     public void setApplication(Application application) { this.application = application; }

@@ -21,7 +21,7 @@ public interface ApplicationService {
     Page<ApplicationResponse> myApplications(String ninaNumber, Pageable pageable);
 
     // Admin
-    void validate(Long applicationId);
+    void validateAndCreateCandidate(Long applicationId);
 
     void reject(Long applicationId, String reason);
 }
