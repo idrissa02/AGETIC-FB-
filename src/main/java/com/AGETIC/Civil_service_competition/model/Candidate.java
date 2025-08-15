@@ -24,7 +24,10 @@ public class Candidate {
     private CandidateStatus status = CandidateStatus.PENDING;
 
     @Column(name = "candidate_number", nullable = false, unique = true, length = 30)
-    private String candidateNumber ;// unique code for each candidate    
+    private String candidateNumber ;// unique code for each candidate   
+    
+    @Column(name = "final_score")
+    private Double finalScore; // Final score after all exams, null if not calculated yet
 
     // Each candidate comes from exactly one application (FK in candidates table)
     @OneToOne(optional = false)
@@ -42,11 +45,14 @@ public class Candidate {
     // --- Constructors ---
     public Candidate() {}
 
-    public Candidate(Long id, CandidateStatus status, Application application) {
+    public Candidate(Long id, CandidateStatus status, Application application,Double finalScore) {
         this.id = id;
         this.status = status;
         this.application = application;
+        this.finalScore = finalScore;
     }
+
+    
 
     // --- Getters & Setters ---
     public Long getId() { return id; }
@@ -66,6 +72,9 @@ public class Candidate {
 
     public List<Notification> getNotifications() { return notifications; }
     public void setNotifications(List<Notification> notifications) { this.notifications = notifications; }
+
+    public Double getFinalScore() { return finalScore; }
+    public void setFinalScore(Double finalScore) { this.finalScore = finalScore; }
 
     // --- Helpers ---
 

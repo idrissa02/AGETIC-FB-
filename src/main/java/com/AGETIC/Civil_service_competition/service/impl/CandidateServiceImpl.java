@@ -5,6 +5,7 @@ import com.AGETIC.Civil_service_competition.Enum.CandidateStatus;
 import com.AGETIC.Civil_service_competition.Enum.ApplicationStatus;
 import com.AGETIC.Civil_service_competition.model.Application;
 import com.AGETIC.Civil_service_competition.model.Candidate;
+import com.AGETIC.Civil_service_competition.model.Grade;
 import com.AGETIC.Civil_service_competition.repository.ApplicationRepository;
 import com.AGETIC.Civil_service_competition.repository.CandidateRepository;
 import com.AGETIC.Civil_service_competition.service.CandidateService;
@@ -21,14 +22,11 @@ import java.util.UUID;
 public class CandidateServiceImpl implements CandidateService {
 
     private final CandidateRepository candidateRepo;
-   
 
     public CandidateServiceImpl(CandidateRepository candidateRepo) {
         this.candidateRepo = candidateRepo;
-     
-    }
 
-  
+    }
 
     @Override
     public CandidateResponse getByCandidateNumber(String candidateNumber) {
@@ -37,17 +35,23 @@ public class CandidateServiceImpl implements CandidateService {
     }
 
     @Override
-    public CandidateResponse setStatus(String candidateNumber, String status) {
-        var opt = candidateRepo.findByCandidateNumber(candidateNumber);
-        if (opt.isEmpty()) return null;
-
-        Candidate c = opt.get();
-        try {
-            c.setStatus(CandidateStatus.valueOf(status.toUpperCase())); // ADMITTED / NOT_ADMITTED / PENDING
-        } catch (IllegalArgumentException e) {
-            return null;
+    public double computeFinalScore(Long candidateId) {
+        var grades = gradeRepo.findByCandidateId(candidateId); // inject GradeRepository here
+        if (grades.isEmpty()) {
+            return 0.0;
         }
-        return toResponse(c);
+        double avg = grades.stream().mapToDouble(Grade::getScore).average().orElse(0.0);
+        // cache if you added finalScore
+        candidateRepo.findById(candidateId).ifPresent(c -> c.setFinalScore(avg));
+        return avg;
+    }
+
+    @Override
+    public void autoUpdateStatus(Long candidateId) {
+        double score = computeFinalScore(candidateId);
+        candRepo.findById(candidateId).ifPresent(c -> {
+            c.setStatus(score >= 60.0 ? CandidateStatus.ADMITTED : CandidateStatus.REFUSED);
+        });
     }
 
     // ---- helpers
@@ -60,8 +64,4 @@ public class CandidateServiceImpl implements CandidateService {
         );
     }
 
-  
-
-
- 
 }

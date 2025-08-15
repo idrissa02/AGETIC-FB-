@@ -119,6 +119,14 @@ public class ExamServiceImpl implements ExamService {
                 .map(this::toResponse);
     }
 
+
+    @Override
+public void publishResults(Long examId){
+  Exam e = examRepo.findById(examId).orElse(null);
+  if (e!=null) e.setResultsPublished(true);
+}
+
+
     
     // helpers
     private void validateDates(LocalDate deadline, LocalDate date) {

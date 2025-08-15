@@ -42,6 +42,10 @@ public class Exam {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "results_published", nullable = false)
+    private boolean resultsPublished = false; // Whether results are published or not
+
+
     // --- Relationships ---
 
     // Each exam belongs to a category
@@ -128,6 +132,9 @@ public class Exam {
 
     public Set<Center> getCenters() { return centers; }
     public void setCenters(Set<Center> centers) { this.centers = centers; }
+
+    public boolean isResultsPublished() { return resultsPublished; }
+    public void setResultsPublished(boolean resultsPublished) { this.resultsPublished = resultsPublished; }
 
     // --- Helpers ---
     public void addTest(Test test) {
