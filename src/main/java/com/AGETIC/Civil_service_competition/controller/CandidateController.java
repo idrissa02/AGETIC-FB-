@@ -1,5 +1,7 @@
+// src/main/java/com/AGETIC/Civil_service_competition/controller/CandidateController.java
 package com.AGETIC.Civil_service_competition.controller;
 
+import com.AGETIC.Civil_service_competition.dto.CandidateProfileResponse;
 import com.AGETIC.Civil_service_competition.dto.CandidateResponse;
 import com.AGETIC.Civil_service_competition.service.CandidateService;
 import org.springframework.http.*;
@@ -15,19 +17,28 @@ public class CandidateController {
         this.service = service;
     }
 
-    // Public: get candidate by candidateNumber
+    // Lightweight view (admin/tools)
     @GetMapping("/{candidateNumber}")
     public ResponseEntity<CandidateResponse> get(@PathVariable String candidateNumber) {
         CandidateResponse res = service.getByCandidateNumber(candidateNumber);
-        return (res == null) ? ResponseEntity.notFound().build() : ResponseEntity.ok(res);
+        return res == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(res);
+    }
+
+    // Public result view (only if results published – enforced in service)
+    @GetMapping("/{candidateNumber}/profile")
+    public ResponseEntity<CandidateProfileResponse> profile(@PathVariable String candidateNumber) {
+        CandidateProfileResponse res = service.viewByCandidateNumber(candidateNumber);
+        return res == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(res);
     }
 
 
-    // Admin: update candidate status (ADMITTED / NOT_ADMITTED / PENDING)
-    @PatchMapping("/{candidateNumber}/status")
-    public ResponseEntity<CandidateResponse> setStatus(@PathVariable String candidateNumber,
-                                                       @RequestParam String status) {
-        CandidateResponse res = service.setStatus(candidateNumber, status);
-        return (res == null) ? ResponseEntity.badRequest().build() : ResponseEntity.ok(res);
-    }
-}
+
+    
+    // Admin: set final status (only if you keep manual override)
+//     @PatchMapping("/{candidateNumber}/status")
+//     public ResponseEntity<CandidateResponse> setStatus(@PathVariable String candidateNumber,
+//                                                        @RequestParam String status) {
+//         CandidateResponse res = service.setStatus(candidateNumber, status);
+//         return res == null ? ResponseEntity.badRequest().build() : ResponseEntity.ok(res);
+//     }
+ }

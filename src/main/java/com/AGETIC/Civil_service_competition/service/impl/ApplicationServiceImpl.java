@@ -147,6 +147,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 a.getPictureUrl(),
                 a.getDocumentsUrl(),
                 a.getCreatedAt()
+                
         );
     }
 

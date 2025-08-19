@@ -19,4 +19,5 @@ public record ApplicationResponse(
         String pictureUrl,
         String documentsUrl,
         LocalDateTime createdAt
+        
 ) {}

@@ -1,5 +1,6 @@
 package com.AGETIC.Civil_service_competition.repository;
 
+import com.AGETIC.Civil_service_competition.model.Candidate;
 import com.AGETIC.Civil_service_competition.model.Grade;
 import com.AGETIC.Civil_service_competition.model.GradeId;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +16,8 @@ public interface GradeRepository extends JpaRepository<Grade, GradeId> {
     Optional<Grade> findByCandidateIdAndTestId(Long candidateId, Long testId);
 
     boolean existsByCandidateIdAndTestId(Long candidateId, Long testId);
+
+    List<Grade> findByTestExamId(Long examId); 
+
+    List<Grade> findByCandidate_Application_Exam_Id(Long examId);
 }

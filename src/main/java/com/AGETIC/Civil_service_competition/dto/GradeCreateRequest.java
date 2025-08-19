@@ -8,5 +8,5 @@ public record GradeCreateRequest(
         Long testId,
         Double score,
         String correctionReason,
-        Long gradedBy // or Long gradedById if you want to only pass ID
+        Admin gradedBy // or Long gradedById if you want to only pass ID
 ) {}
