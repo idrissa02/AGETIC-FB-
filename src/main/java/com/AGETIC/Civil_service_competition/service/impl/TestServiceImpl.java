@@ -126,13 +126,13 @@ public class TestServiceImpl implements TestService {
     // ---- helpers ----
     private TestResponse toResponse(Test t) {
         var exam = t.getExam();
-        long gradesCount = (t.getGrades() == null) ? 0L : t.getGrades().size();
         return new TestResponse(
                 t.getId(),
-                t.getTitle(),
                 exam != null ? exam.getId() : null,
-                exam != null ? exam.getTitle() : null,
-                gradesCount
+                t.getTitle()
+                
+               
+            
         );
     }
 

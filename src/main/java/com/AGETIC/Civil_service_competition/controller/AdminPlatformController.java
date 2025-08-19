@@ -19,7 +19,6 @@ public class AdminPlatformController {
     }
 
     // ================= EXAMS =================
-
     @PostMapping("/exams")
     public ResponseEntity<ExamResponse> createExam(@RequestBody AdminExamCreateRequest req) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.createExam(req));
@@ -27,7 +26,7 @@ public class AdminPlatformController {
 
     @PutMapping("/exams/{examId}")
     public ResponseEntity<ExamResponse> updateExam(@PathVariable Long examId,
-                                                   @RequestBody AdminExamUpdateRequest req) {
+            @RequestBody AdminExamUpdateRequest req) {
         return ResponseEntity.ok(service.updateExam(examId, req));
     }
 
@@ -50,12 +49,11 @@ public class AdminPlatformController {
 
     @PostMapping("/exams/{examId}/tests")
     public ResponseEntity<List<TestMiniResponse>> addTests(@PathVariable Long examId,
-                                                           @RequestBody AddTestsRequest req) {
+            @RequestBody AddTestsRequest req) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.addTests(examId, req));
     }
 
     // ================= GRADING =================
-
     @PostMapping("/grades")
     public ResponseEntity<GradeResponse> gradeCandidate(@RequestBody AdminGradeRequest req) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.gradeCandidate(req));
@@ -66,33 +64,53 @@ public class AdminPlatformController {
         return ResponseEntity.ok(service.listGradesByCandidate(candidateId));
     }
 
-    @GetMapping("/grades/exam/{examId}")
+    @GetMapping("/grades/exams/{examId}")
     public ResponseEntity<List<GradeResponse>> listGradesByExam(@PathVariable Long examId) {
         return ResponseEntity.ok(service.listGradesByExam(examId));
     }
 
+
+
+
     // ================= CANDIDATE PROFILE (admin view) =================
 
-    @GetMapping("/candidates/{candidateId}/profile")
-    public ResponseEntity<CandidateProfileResponse> candidateProfile(@PathVariable Long candidateId) {
-        return ResponseEntity.ok(service.getCandidateProfile(candidateId));
+
+    @GetMapping("/candidates/{candidateNumber}/profile")
+    public ResponseEntity<CandidateProfileResponse> candidateProfile(@PathVariable String candidateNumber) {
+        return ResponseEntity.ok(service.getCandidateProfile(candidateNumber));
     }
 
-
     @PatchMapping("/exams/{examId}/publish")
-public ResponseEntity<Void> publish(@PathVariable Long examId, @RequestParam boolean published) {
-    service.publishExam(examId, published);
-    return ResponseEntity.noContent().build();
-}
+    public ResponseEntity<Void> publish(@PathVariable Long examId, @RequestParam boolean published) {
+        service.publishExam(examId, published);
+        return ResponseEntity.noContent().build();
+    }
 
-@GetMapping("/exams/{examId}/results.xlsx")
-public ResponseEntity<byte[]> export(@PathVariable Long examId) {
-    byte[] bytes = service.exportExamResultsXlsx(examId);
-    return ResponseEntity.ok()
-        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=exam-" + examId + "-results.xlsx")
-        .contentType(MediaType.parseMediaType(
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
-        .body(bytes);
-}
+    @GetMapping("/exams/{examId}/results.xlsx")
+    public ResponseEntity<byte[]> export(@PathVariable Long examId) {
+        byte[] bytes = service.exportExamResultsXlsx(examId);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=exam-" + examId + "-results.xlsx")
+                .contentType(MediaType.parseMediaType(
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .body(bytes);
+    }
+
+//================= EXAM CENTERS =================
+
+    @PostMapping("/exams/{examId}/centers")
+    public ResponseEntity<Void> assignCenters(@PathVariable Long examId,
+            @RequestBody ExamCenterAssignRequest req) {
+        if (req.examId() == null || !req.examId().equals(examId)) {
+            return ResponseEntity.badRequest().build();
+        }
+        service.assignCenters(req);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/exams/{examId}/centers")
+    public ResponseEntity<List<CenterResponse>> listCenters(@PathVariable Long examId) {
+        return ResponseEntity.ok(service.listCentersOfExam(examId));
+    }
 
 }

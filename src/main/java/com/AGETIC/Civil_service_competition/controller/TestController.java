@@ -44,6 +44,10 @@ public class TestController {
     public TestResponse getById(@PathVariable Long id) {
         return service.getTestById(id);
     }
+      @GetMapping("/by-exam/{examId}")
+    public List<TestResponse> listByExam(@PathVariable Long examId) {
+        return service.listByExam(examId);
+    } 
 
     @PostMapping
     public TestResponse create(@RequestBody @Valid TestRequest request) {

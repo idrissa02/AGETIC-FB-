@@ -4,13 +4,18 @@ import com.AGETIC.Civil_service_competition.dto.*;
 import com.AGETIC.Civil_service_competition.model.*;
 import com.AGETIC.Civil_service_competition.repository.*;
 import com.AGETIC.Civil_service_competition.service.AdminPlatformService;
+
 import jakarta.transaction.Transactional;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,19 +27,22 @@ public class AdminPlatformServiceImpl implements AdminPlatformService {
     private final CandidateRepository candidateRepo;
     private final GradeRepository gradeRepo;
     private final AdminRepository adminRepo;
+        private final CenterRepository centerRepo ;
 
     public AdminPlatformServiceImpl(
             ExamRepository examRepo,
             TestRepository testRepo,
             CandidateRepository candidateRepo,
             GradeRepository gradeRepo,
-            AdminRepository adminRepo
+            AdminRepository adminRepo,
+            CenterRepository centerRepo
     ) {
         this.examRepo = examRepo;
         this.testRepo = testRepo;
         this.candidateRepo = candidateRepo;
         this.gradeRepo = gradeRepo;
         this.adminRepo = adminRepo;
+        this.centerRepo = centerRepo;
     }
 
     // ----------------- EXAMS -----------------
@@ -169,12 +177,15 @@ public class AdminPlatformServiceImpl implements AdminPlatformService {
     // ----------------- CANDIDATE PROFILE -----------------
 
     @Override
-    public CandidateProfileResponse getCandidateProfile(Long candidateId) {
-        Candidate c = candidateRepo.findById(candidateId)
-                .orElseThrow(() -> new RuntimeException("Candidate not found"));
+    public CandidateProfileResponse getCandidateProfile(String candidateNumber) {
+       Candidate c = candidateRepo.findByCandidateNumber(candidateNumber)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Candidate not found"));
 
-        Application app = c.getApplication();
-        Exam exam = app.getExam();
+    Application app = Optional.ofNullable(c.getApplication())
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No application linked to candidate"));
+
+    Exam exam = Optional.ofNullable(app.getExam())
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No exam linked to application"));
 
         List<TestMiniResponse> tests = testRepo.findByExamId(exam.getId()).stream()
                 .map(t -> new TestMiniResponse(t.getId(), t.getTitle()))
@@ -292,6 +303,32 @@ public byte[] exportExamResultsXlsx(Long examId) {
         throw new RuntimeException("Export failed", e);
     }
 }
+
+//Assign centers to an exam
+@Override
+public void assignCenters(ExamCenterAssignRequest req) {
+    Exam exam = examRepo.findById(req.examId())
+            .orElseThrow(() -> new RuntimeException("Exam not found"));
+
+    var set = new java.util.HashSet<Center>();
+    for (Long cid : req.centerIds()) {
+        Center c = centerRepo.findById(cid)
+                .orElseThrow(() -> new RuntimeException("Center not found: " + cid));
+        set.add(c);
+    }
+    exam.getCenters().clear();
+    exam.getCenters().addAll(set); // managed entity; persists on tx commit
+}
+
+@Override
+public java.util.List<CenterResponse> listCentersOfExam(Long examId) {
+    Exam exam = examRepo.findById(examId)
+            .orElseThrow(() -> new RuntimeException("Exam not found"));
+    return exam.getCenters().stream()
+            .map(c -> new CenterResponse(c.getId(), c.getName(), c.getLocation()))
+            .toList();
+}
+
 
 
 

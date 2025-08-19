@@ -11,7 +11,8 @@ import java.util.Objects;
 import com.AGETIC.Civil_service_competition.Enum.CandidateStatus;
 
 @Entity
-@Table(name = "candidates")
+@Table(name = "candidates",
+       indexes = { @Index(name = "uk_candidate_number", columnList = "candidate_number", unique = true) })
 public class Candidate {
 
     @Id

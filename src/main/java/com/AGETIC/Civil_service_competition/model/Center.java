@@ -26,6 +26,9 @@ public class Center {
     @Column(name = "location", nullable = false, length = 255)
     private String location;
 
+    @Column(name = "enabled", nullable = false)
+private boolean enabled = true;
+
     // --- Relationships ---
 
     // One center has many classrooms
@@ -61,7 +64,8 @@ public class Center {
     public Set<Exam> getExams() { return exams; }
     public void setExams(Set<Exam> exams) { this.exams = exams; }
 
-
+public boolean isEnabled() { return enabled; }
+public void setEnabled(boolean enabled) { this.enabled = enabled; }
 
     
     // --- Helpers ---

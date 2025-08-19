@@ -16,4 +16,7 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long> {
     Optional<Candidate> findByApplicationId(Long applicationId);
 
     List<Candidate> findAllByApplication_Exam_Id(Long examId);
+
+   
 }
+
