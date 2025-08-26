@@ -1,0 +1,65 @@
+.success-wrap {
+  max-width: 600px;
+  margin: 32px auto;
+  padding: 0 16px;
+}
+
+.success-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 12px rgba(0,0,0,.06);
+}
+
+.success-title {
+  font-size: 1.4rem;
+  margin: 0 0 8px;
+}
+
+.success-note {
+  color: #065f46;
+  background: #ecfdf5;
+  border: 1px solid #34d399;
+  padding: 12px;
+  border-radius: 8px;
+  margin: 12px 0;
+}
+
+.kv {
+  margin: 10px 0;
+}
+
+.kv b {
+  display: inline-block;
+  min-width: 160px;
+}
+
+.actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  background: #0f766e;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-outline {
+  background: #fff;
+  color: #0f766e;
+  border: 1px solid #0f766e;
+  border-radius: 10px;
+  padding: 12px 16px;
+  text-decoration: none;
+}
+.btn-primary:hover {
+  background: #115e59;
+}

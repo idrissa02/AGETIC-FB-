@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,12 +18,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.AGETIC.Civil_service_competition.dto.ApplicationCreateRequest;
 import com.AGETIC.Civil_service_competition.dto.ApplicationResponse;
 import com.AGETIC.Civil_service_competition.dto.StatusResponse;
 import com.AGETIC.Civil_service_competition.service.ApplicationService;
 
+import ch.qos.logback.core.model.Model;
 import jakarta.validation.Valid;
 
 @RestController
@@ -77,4 +80,24 @@ public class ApplicationController {
         service.reject(id, reason);
         return ResponseEntity.ok().build();
     }
+
+
+    @PostMapping("/applications/submit")
+public String submitApplication(@ModelAttribute ApplicationCreateRequest req,
+                                RedirectAttributes redirectAttributes) {
+    ApplicationResponse response = service.create(req);
+
+    // Pass data to the success page
+    redirectAttributes.addFlashAttribute("application", response);
+
+    // Redirect to success.html
+    return "redirect:/applications/success";
+}
+
+@GetMapping("/applications/success")
+public String showSuccessPage(Model model) {
+    // Model will contain "application" from redirectAttributes
+    return "success";  // → templates/success.html
+}
+
 }

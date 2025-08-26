@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+  <title>Formulaire de Candidature</title>
+  <link rel="stylesheet" th:href="@{/css/apply.css}">
+</head>
+<body>
+
+<!-- NAVBAR (outside of .container so it spans full width) -->
+<header class="govbar">
+  <div class="govbar-inner">
+    <div class="govbar-left">
+      <img class="gov-emblem" th:src="@{/img/emblem-mali.jpeg}" alt="Emblème de la République du Mali" />
+      <div class="gov-text">
+        <div class="gov-topline">
+          <span class="mali-flag" aria-hidden="true"></span>
+          <span class="gov-country">République du Mali</span>
+        </div>
+        <div class="gov-title">
+         Plateforme de Gestion des Concours de la Fonction Publique<br/>
+          <span class="gov-subtitle">Ministère du Travail et de la Fonction Publique</span>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Decorative skyline on the right -->
+    <div class="govbar-right" aria-hidden="true">
+      <!-- You can swap this SVG; it’s just a thin white stroke skyline -->
+      <svg class="skyline" viewBox="0 0 600 80" preserveAspectRatio="xMidYMid meet">
+        <path d="M0,70 L50,70 L70,20 L90,70 L130,70 L140,40 L170,40 L170,70 L210,70 L220,30 L260,30 L260,70 
+                 L310,70 L320,20 L350,20 L350,70 L400,70 L410,35 L450,35 L450,70 L510,70 L525,25 L560,25 L560,70 L600,70"
+              fill="none" stroke="white" stroke-width="2" opacity=".85" />
+      </svg>
+    </div>
+  </div>
+</header>
+
+
+  <div class="card">
+    <h2 class="title">Formulaire de Candidature</h2>
+
+    <!-- Example: examId is passed from controller -->
+    <form th:action="@{/apply/submit}" method="post" enctype="multipart/form-data" id="applicationForm">
+      <input type="hidden" id="examId" name="examId" th:value="${examId}" />
+
+      <div class="section-title">1 • Informations personnelles</div>
+
+      <div class="field">
+        <label for="nina">NINA</label>
+        <input id="nina" name="ninaNumber" type="text" inputmode="numeric" autocomplete="off"
+               placeholder="ex:204091050066422K" required pattern="^[0-9A-Za-z ]{8,20}$"
+               th:value="${ninaNumber}" />
+        <div class="hint">Saisissez votre numéro NINA.</div>
+      </div>
+
+      <div class="field">
+        <label for="surname">Nom</label>
+        <input id="surname" name="surname" type="text" required th:value="${surname}" />
+      </div>
+
+      <div class="field">
+        <label for="firstname">Prénom(s)</label>
+        <input id="firstname" name="name" type="text" required th:value="${name}" />
+      </div>
+
+      <div class="field">
+        <label for="birthDate">Date de naissance</label>
+        <input id="birthDate" name="birthDate" type="date" required th:value="${birthDate}" />
+      </div>
+
+      <div class="field">
+        <label for="phone">Téléphone</label>
+        <input id="phone" name="phone" type="tel" placeholder="+223 ..." required th:value="${phone}" />
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" placeholder="ex: nom@exemple.ml" required th:value="${email}" />
+      </div>
+
+      <div class="section-title">2 • Pièces justificatives</div>
+
+      <div class="uploads">
+        <div class="upload-tile">
+          <h4>Photo d’identité</h4>
+          <p>Glissez-déposez un fichier ou cliquez pour choisir.</p>
+          <div class="row-actions">
+            <input type="file" id="picture" name="picture" accept="image/*" />
+            <span class="note">PNG/JPG, ≤ 5 Mo</span>
+          </div>
+        </div>
+
+        <div class="upload-tile">
+          <h4>Documents justificatifs</h4>
+          <p>CV, diplômes, CIN… (un seul PDF ou un ZIP).</p>
+          <div class="row-actions">
+            <input type="file" id="documents" name="documents" accept=".pdf,.zip" />
+            <span class="note">PDF/ZIP, ≤ 10 Mo</span>
+          </div>
+        </div>
+      </div>
+
+      <label class="consent">
+        <input type="checkbox" id="confirmAccuracy" required />
+        <span>J’atteste l’exactitude des informations fournies.</span>
+      </label>
+
+      <button class="btn" type="submit">Soumettre ma candidature</button>
+    </form>
+  </div>
+
+  <footer>© Ministère du Travail et de la Fonction Publique</footer>
+
+
+<!-- <script th:src="@{/js/apply.js}" defer></script> -->
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Candidature déjà soumise</title>
+  <link rel="stylesheet" th:href="@{/css/apply.css}">
+  <link rel="stylesheet" th:href="@{/css/error.css}">
+</head>
+<body>
+
+<header class="govbar">
+  <div class="govbar-inner">
+    <div class="govbar-left">
+      <img class="gov-emblem" th:src="@{/img/emblem-mali.jpeg}" alt="Emblème de la République du Mali" />
+      <div class="gov-text">
+        <div class="gov-topline">
+          <span class="mali-flag" aria-hidden="true"></span>
+          <span class="gov-country">République du Mali</span>
+        </div>
+        <div class="gov-title">
+         Plateforme de Gestion des Concours de la Fonction Publique<br/>
+          <span class="gov-subtitle">Ministère du Travail et de la Fonction Publique</span>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Decorative skyline on the right -->
+    <div class="govbar-right" aria-hidden="true">
+      <!-- You can swap this SVG; it’s just a thin white stroke skyline -->
+      <svg class="skyline" viewBox="0 0 600 80" preserveAspectRatio="xMidYMid meet">
+        <path d="M0,70 L50,70 L70,20 L90,70 L130,70 L140,40 L170,40 L170,70 L210,70 L220,30 L260,30 L260,70 
+                 L310,70 L320,20 L350,20 L350,70 L400,70 L410,35 L450,35 L450,70 L510,70 L525,25 L560,25 L560,70 L600,70"
+              fill="none" stroke="white" stroke-width="2" opacity=".85" />
+      </svg>
+    </div>
+  </div>
+</header>
+
+<div class="error-wrap">
+  <div class="error-card">
+    <h1 class="error-title">Candidature déjà soumise</h1>
+
+    <p class="error-note" th:text="${message}">
+      Vous avez déjà postulé à ce concours.
+    </p>
+
+    <div class="kv"><b>Concours :</b> <span th:text="${examTitle}">Concours</span></div>
+    <div class="kv"><b>NINA :</b> <span th:text="${ninaNumber}">NINA</span></div>
+
+    <div class="actions">
+      <a th:href="@{'/apply?examId=' + ${examId}}" class="btn-outline">Retour au formulaire</a>
+      <a th:href="@{'/status?examId=' + ${examId} + '&nina=' + ${ninaNumber}}" class="btn-primary">Consulter le statut</a>
+      <a th:href="@{/}" class="btn-secondary">Accueil</a>
+    </div>
+
+    <small class="hint">
+      Retournez au formulaire et appliquez avec un numero NINA valide!!.
+    </small>
+  </div>
+</div>
+
+</body>
+</html>
