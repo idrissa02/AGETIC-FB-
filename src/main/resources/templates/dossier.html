@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <title>Mon dossier</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}" />
+</head>
+<body>
+  <header th:replace="~{fragments/header :: siteHeader}"></header>
+
+  <main class="container">
+    <h2>Mon dossier</h2>
+
+    <!-- Small helper: search by candidateNumber -->
+
+      
+      <form class="lookup-form" method="get" >
+        <label>Numéro candidat</label>
+        <input name="candidateNumber" type="text" placeholder="Ex: CND-2025-00045" required />
+        <button class="btn-primary" type="submit">Chercher</button>
+      </form>
+    
+
+  </main>
+
+
+</body>
+
+   <footer th:replace="~{fragments/footer :: siteFooter}"></footer>
+</html>

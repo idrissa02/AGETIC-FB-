@@ -5,6 +5,10 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+
 import com.AGETIC.Civil_service_competition.model.Application;
 
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
@@ -12,4 +16,6 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
     Optional<Application> findByNinaNumberAndExamId(String ninaNumber, Long examId);
     boolean existsByNinaNumberAndExamId(String ninaNumber, Long examId);
     Page<Application> findAllByNinaNumber(String ninaNumber, Pageable pageable);
+
+
 }

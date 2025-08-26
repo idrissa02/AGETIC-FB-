@@ -1,0 +1,30 @@
+<header xmlns:th="http://www.thymeleaf.org" th:fragment="siteHeader" class="govbar">
+  <div class="govbar-inner">
+    <!-- Left: emblem + text -->
+    <div class="govbar-left">
+      <img class="gov-emblem" th:src="@{/img/emblem-mali.jpeg}" alt="Emblème de la République du Mali" />
+      <div class="gov-text">
+        <div class="gov-topline">
+          <span class="mali-flag" aria-hidden="true"></span>
+          <span class="gov-country">République du Mali</span>
+        </div>
+        <div class="gov-title">
+          Plateforme de Gestion des Concours de la Fonction Publique<br/>
+          <span class="gov-subtitle">Ministère du Travail et de la Fonction Publique</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: CTA + decorative skyline -->
+    <div class="govbar-right">
+      <a class="btn-inscriptions" th:href="@{/mes-inscriptions}">Mes inscriptions</a>
+
+      <!-- Decorative skyline -->
+      <!-- <svg class="skyline" viewBox="0 0 600 80" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <path d="M0,70 L50,70 L70,20 L90,70 L130,70 L140,40 L170,40 L170,70 L210,70 L220,30 L260,30 L260,70 
+                 L310,70 L320,20 L350,20 L350,70 L400,70 L410,35 L450,35 L450,70 L510,70 L525,25 L560,25 L560,70 L600,70"
+              fill="none" stroke="white" stroke-width="2" opacity=".85" />
+      </svg>
+    </div> -->
+  </div>
+</header>

@@ -13,5 +13,8 @@ public record ExamResponse(
         Long categoryId,
         Long createdByAdminId,
         Integer testsCount,
-        boolean resultsPublished
-) {}
+        boolean resultsPublished,
+        String condition
+        ) {
+
+}

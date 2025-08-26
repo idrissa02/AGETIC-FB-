@@ -1,0 +1,16 @@
+<nav xmlns:th="http://www.thymeleaf.org"
+     th:fragment="pager(page, baseUrl)"
+     class="pager"
+     th:if="${page != null and page.totalPages > 1}">
+
+  <a th:class="'pg-link ' + (${page.number == 0} ? 'disabled' : '')"
+     th:href="${page.number == 0} ? '#' : ${baseUrl + (page.number - 1)}">Précédent</a>
+
+  <span class="pg-info">
+    Page <strong th:text="${page.number + 1}">1</strong> /
+    <strong th:text="${page.totalPages}">1</strong>
+  </span>
+
+  <a th:class="'pg-link ' + (${page.number + 1 >= page.totalPages} ? 'disabled' : '')"
+     th:href="${page.number + 1 >= page.totalPages} ? '#' : ${baseUrl + (page.number + 1)}">Suivant</a>
+</nav>

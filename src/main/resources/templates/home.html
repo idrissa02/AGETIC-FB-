@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Portail national des concours</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}" />
+  <script defer th:src="@{/js/app.js}"></script>
+</head>
+
+<body>
+  <header th:replace="~{fragments/header :: siteHeader}"></header>
+
+  <!-- Quick actions -->
+  <section class="quick-actions">
+    <div class="qa-card">
+      <h3 class="qa-title">Voir mon dossier</h3>
+      <p class="qa-desc">Suivre le statut de ma candidature / voir ma convocation.</p>
+      <a th:href="@{/mon-dossier}" class="qa-btn qa-btn-blue">Voir mon dossier</a>
+    </div>
+
+    <div class="qa-card">
+      <h3 class="qa-title">Voir les résultats d'un concours</h3>
+      <p class="qa-desc">Consulter les résultats publiés par concours.</p>
+      <a th:href="@{/resultats}" class="qa-btn qa-btn-green">Voir les résultats</a>
+    </div>
+  </section>
+
+
+  <!-- Exams feed (only opening) -->
+  <main class="container">
+    <div class="feed-head">
+      <h2>Concours ouverts</h2>
+      <ul class="legend">
+        <li><span class="dot last"></span> Dernier jour</li>
+        <li><span class="dot on"></span> En cours</li>
+        <li><span class="dot up"></span> À venir</li>
+      </ul>
+    </div>
+
+    <div class="cards-stack">
+      <!-- Page<ExamResponse> is provided as model attribute "exams" -->
+      <div th:if="${#lists.isEmpty(exams.content)}" class="empty">
+        Aucun concours disponible pour le moment.
+      </div>
+
+      <div th:each="exam : ${exams.content}" class="exam-card" th:attr="data-deadline=${exam.applicationDeadline},
+                    data-exam-id=${exam.id},
+                   data-condition=${#strings.escapeXml(exam.condition)}">
+        <header class="exam-head">
+          <span class="status-dot" aria-hidden="true"></span>
+          <h3 th:text="${exam.title}">Titre du concours</h3>
+          <!-- Use exam.id in the link (not visibly shown) -->
+          <a class="btn-apply" th:href="@{/apply(examId=${exam.id})}">
+            Postuler
+          </a>
+        </header>
+
+        <div class="exam-subtitle">
+          <span>📅 Date de l'examen :
+            <strong th:text="${#temporals.format(exam.date, 'dd/MM/yyyy')}">15/09/2025</strong>
+          </span>
+        </div>
+
+        <ul class="meta">
+          <li>Date limite : <strong
+              th:text="${#temporals.format(exam.applicationDeadline, 'dd/MM/yyyy')}">01/09/2025</strong></li>
+          <li th:if="${exam.hours != null}">Durée : <strong th:text="${exam.hours}">3</strong> h</li>
+          <li th:if="${exam.quota != null}">Quota : <strong th:text="${exam.quota}">100</strong></li>
+          <li th:if="${exam.testsCount != null}">Épreuves : <strong th:text="${exam.testsCount}">2</strong></li>
+        </ul>
+
+        <footer class="links">
+          <button type="button" class="link-btn js-open-guide">Guide (conditions)</button>
+          <button type="button" class="link-btn js-open-centers">Centres d'examen</button>
+        </footer>
+      </div>
+    </div>
+
+
+   <!-- Load more -->
+<div id="loadMoreWrap">
+  <button id="loadMoreBtn"
+          class="load-more"
+          th:data-next-page="${exams.number + 1}"
+          th:data-size="5">
+    Charger plus de concours
+  </button>
+</div>
+
+
+<!-- 
+    <div th:replace="~{fragments/pagination :: pager(${exams}, '/?page=')}"></div> -->
+  </main>
+
+  <div th:replace="~{fragments/modals :: modals}"></div>
+
+   <footer th:replace="~{fragments/footer :: siteFooter}"></footer>
+</body>
+
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Mes inscriptions</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}" />
+</head>
+
+<body>
+  <header th:replace="~{fragments/header :: siteHeader}"></header>
+
+  <main class="container">
+    <h2>Mes inscriptions</h2>
+
+    <!-- Simple lookup form forwarding ninaNumber as query param -->
+    <form class="lookup-form" method="get" th:action="@{/mes-inscriptions}">
+      <label for="nin">NINA</label>
+      <input id="nin" name="ninaNumber" type="text" th:value="${param.ninaNumber}"
+        placeholder="Entrez votre numéro NINA" required />
+      <button type="submit" class="btn-primary">Rechercher</button>
+    </form>
+
+    <!-- Page<ApplicationResponse> as 'apps' when present -->
+
+    <div th:if="${apps != null}">
+      <div th:if="${#lists.isEmpty(apps.content)}" class="empty">
+        Aucune inscription trouvée pour ce NINA.
+      </div>
+<table th:if="${apps != null and !#lists.isEmpty(apps.content)}" class="table">
+  <thead>
+    <tr>
+      <th>Nom</th>
+      <th>Prénom</th>
+      <th>Statut</th>
+      <th>Soumis le</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr th:each="a : ${apps.content}">
+      <td th:text="${a.surname}">Traoré</td>
+      <td th:text="${a.name}">Awa</td>
+      <td><span class="badge" th:text="${a.status}">PENDING</span></td>
+      <td th:text="${#temporals.format(a.createdAt, 'dd/MM/yyyy HH:mm')}">20/04/2025 14:31</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+      <!-- button to move forward and backward when applications are many  -->
+      <section th:with="
+  nn=${#lists.isEmpty(param.ninaNumber) ? '' : param.ninaNumber[0]},
+  base=${'/mes-inscriptions?ninaNumber=' + nn + '&page='}">
+        <div th:if="${apps != null}" th:replace="~{fragments/pagination :: pager(${apps}, ${base})}"></div>
+      </section>
+
+    </div>
+  </main>
+</body>
+<footer th:replace="~{fragments/footer :: siteFooter}"></footer>
+
+</html>

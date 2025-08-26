@@ -345,7 +345,9 @@ public java.util.List<CenterResponse> listCentersOfExam(Long examId) {
                 e.getCategory() != null ? e.getCategory().getId() : null,
                 e.getCreatedBy() != null ? e.getCreatedBy().getId() : null,
                 (e.getTests() != null) ? e.getTests().size() : 0,
-                e.isResultsPublished()
+                e.isResultsPublished(),
+                e.getCondition()
+
         );
     }
 
