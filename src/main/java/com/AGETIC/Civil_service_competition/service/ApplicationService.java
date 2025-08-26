@@ -24,4 +24,5 @@ public interface ApplicationService {
     void validateAndCreateCandidate(Long applicationId);
 
     void reject(Long applicationId, String reason);
+    ApplicationResponse get(Long id);
 }

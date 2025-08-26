@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Candidature soumise</title>
+  <link rel="stylesheet" th:href="@{/css/apply.css}"> <!-- shared styles -->
+  <link rel="stylesheet" th:href="@{/css/success.css}"> <!-- page specific -->
+</head>
+<body>
+
+<header class="govbar">
+  <div class="govbar-inner">
+    <div class="govbar-left">
+      <img class="gov-emblem" th:src="@{/img/emblem-mali.jpeg}" alt="Emblème de la République du Mali"/>
+      <div class="gov-text">
+        <div class="gov-topline">
+          <span class="mali-flag" aria-hidden="true"></span>
+          <span class="gov-country">République du Mali</span>
+        </div>
+        <div class="gov-title">
+          Plateforme de Gestion des Concours de la Fonction Publique<br/>
+          <span class="gov-subtitle">Ministère du Travail et de la Fonction Publique</span>
+        </div>
+      </div>
+    </div>
+    <div class="govbar-right" aria-hidden="true">
+      <svg class="skyline" viewBox="0 0 600 80" preserveAspectRatio="xMidYMid meet">
+        <path d="M0,70 L50,70 L70,20 L90,70 L130,70 L140,40 L170,40 L170,70 L210,70 L220,30 L260,30 L260,70
+                 L310,70 L320,20 L350,20 L350,70 L400,70 L410,35 L450,35 L450,70 L510,70 L525,25 L560,25 L560,70 L600,70"
+              fill="none" stroke="white" stroke-width="2" opacity=".85"/>
+      </svg>
+    </div>
+  </div>
+</header>
+
+<div class="success-wrap">
+  <div class="success-card">
+    <h1 class="success-title">Votre candidature a été soumise avec succès ✅</h1>
+
+    <div class="success-note">
+      Conservez bien votre numéro de candidature pour suivre l’état de votre dossier.
+    </div>
+
+    <div class="kv">
+      <b>Nom et prénom(s) :</b>
+     <span th:text="|${surname} ${name}|">NOM Prénom</span>
+    </div>
+
+    <div class="kv">
+      <b>Concours :</b>
+      <span th:text="${examTitle}">Concours n°42</span>
+    </div>
+
+    <div class="kv">
+      <b>Numéro d'application :</b>
+      <span th:text="${applicantNumber}">APP-2025-000123</span>
+      <small style="color:#6b7280;margin-left:8px">(ID: <span th:text="${application.id}">123</span>)</small>
+    </div>
+
+    <div class="actions">
+      <a th:href="@{/}" class="btn-outline">Retour à l’accueil</a>
+      <a th:href="@{'/status?applicationId=' + ${application.id}}" class="btn-primary">Consulter le statut</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

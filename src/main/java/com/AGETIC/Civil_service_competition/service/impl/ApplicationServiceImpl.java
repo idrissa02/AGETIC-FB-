@@ -24,6 +24,7 @@ import com.AGETIC.Civil_service_competition.repository.CandidateRepository;
 import com.AGETIC.Civil_service_competition.repository.ExamRepository;
 import com.AGETIC.Civil_service_competition.service.ApplicationService;
 import com.AGETIC.Civil_service_competition.service.FileStorageService;
+import com.AGETIC.Civil_service_competition.exception.AlreadyAppliedException;
 
 @Service
 @Transactional
@@ -54,7 +55,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .orElseThrow(() -> new RuntimeException("Exam not found"));  //check if the exam exist 
 
         if (applicationRepository.existsByNinaNumberAndExamId(req.ninaNumber(), req.examId())) { // prevent from 2xApplication
-            throw new RuntimeException("Already applied to this exam");
+            throw new AlreadyAppliedException(req.ninaNumber(), req.examId());
         }
 
         Application a = new Application();
@@ -127,6 +128,15 @@ public class ApplicationServiceImpl implements ApplicationService {
         a.setStatus(ApplicationStatus.REFUSED);
     }
 
+@Override
+@Transactional(readOnly = true)
+public ApplicationResponse get(Long id) {
+    return toResponse(byId(id));
+}
+
+
+
+
     // Helpers
     private Application byId(Long id) {
         return applicationRepository.findById(id)
@@ -170,5 +180,9 @@ public class ApplicationServiceImpl implements ApplicationService {
     private String init(String x) {
         return (x == null || x.isBlank()) ? "X" : x.trim().substring(0, 1).toUpperCase();
     }
+
+   
+
+
 
 }

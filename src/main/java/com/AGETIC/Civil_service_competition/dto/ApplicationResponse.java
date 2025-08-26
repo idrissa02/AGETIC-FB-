@@ -19,5 +19,14 @@ public record ApplicationResponse(
         String pictureUrl,
         String documentsUrl,
         LocalDateTime createdAt
-        
-) {}
+     ) {}
+
+    // public Long getId() {
+    //     // TODO Auto-generated method stub
+    //     throw new UnsupportedOperationException("Unimplemented method 'getId'");
+    // }
+
+    // public void setId(Long id2) {
+    //     // TODO Auto-generated method stub
+    //     throw new UnsupportedOperationException("Unimplemented method 'setId'");
+    // }}   
