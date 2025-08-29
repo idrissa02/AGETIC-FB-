@@ -4,8 +4,10 @@ package com.AGETIC.Civil_service_competition.service;
 import com.AGETIC.Civil_service_competition.dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import java.util.List;
 
 public interface ExamService {
+     List<ExamResponse> getAllExams();
 
     ExamResponse create(ExamCreateRequest req);
 

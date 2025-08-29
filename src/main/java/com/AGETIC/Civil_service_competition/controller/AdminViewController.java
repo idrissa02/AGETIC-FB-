@@ -31,4 +31,5 @@ public class AdminViewController {
     public String allApplicationsPage() {
         return "admin-applications";
     }
+    
 }

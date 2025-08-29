@@ -3,12 +3,11 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Panneau d’Administration</title>
+  <title>Gestion des catégories</title>
   <link rel="stylesheet" th:href="@{/css/admin.css}">
 </head>
 <body>
 
-<!-- Top Government Bar -->
 <header class="govbar">
   <div class="govbar-inner">
     <div class="govbar-left">
@@ -19,7 +18,7 @@
           <span class="gov-country">République du Mali</span>
         </div>
         <div class="gov-title">
-          Portail d’Administration — Concours de la Fonction Publique
+        Administration — Categories d’examen
         </div>
       </div>
     </div>
@@ -71,19 +70,59 @@
     </nav>
   </aside>
 
-  <!-- Main content -->
-  <main class="content">
-    <div class="content-head">
-        <h1 class="content-title">Bienvenue sur le Panneau d’Administration</h1></div>
+<div class="wrap">
 
-      <div class="dashboard-center">
-        <img th:src="@{/img/admin.png}" alt="Dashboard Image" style="max-width:50%;border-radius:500px;box-shadow:0 2px 8px rgba(0,0,0,0.15)" class="admin-icon">
-</div>
-    
-      </main>
-</div>
-<script th:src="@{/js/admin.js}" defer></script>
-<footer>© Ministère du Travail et de la Fonction Publique</footer>
+  <h1>Gestion des catégories</h1>
 
+  <div th:if="${flashSuccess}" class="flash success" th:text="${flashSuccess}"></div>
+  <div th:if="${flashError}"   class="flash error"   th:text="${flashError}"></div>
+
+  <!-- Formulaire -->
+  <div class="card">
+    <h2 th:text="${form.id} != null ? 'Modifier la catégorie' : 'Créer une catégorie'"></h2>
+
+    <form th:action="${form.id} != null ? @{'/admin/categories/' + ${form.id} + '/update'} : @{/admin/categories/create}"
+          method="post" th:object="${form}">
+      <input type="hidden" th:field="*{id}"/>
+
+      <div>
+        <label for="type">Type de catégorie</label>
+        <input id="type" th:field="*{type}" required placeholder="ex: Informatique"/>
+        <div th:if="${#fields.hasErrors('type')}" th:errors="*{type}" class="error-msg"></div>
+      </div>
+
+      <div class="actions">
+        <button class="btn" type="submit" th:text="${form.id} != null ? 'Mettre à jour' : 'Créer'"></button>
+        <a th:if="${form.id} != null" class="btn-outline" th:href="@{/admin/categories}">Annuler</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Liste -->
+  <div class="card">
+    <h3>Liste des catégories</h3>
+    <table>
+      <thead>
+        <tr><th>ID</th><th>Type</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        <tr th:each="c : ${categories}">
+          <td th:text="${c.id}">1</td>
+          <td th:text="${c.type}">Informatique</td>
+          <td>
+            <a class="btn-outline" th:href="@{'/admin/categories/' + ${c.id} + '/edit'}">Modifier</a>
+            <form th:action="@{'/admin/categories/' + ${c.id} + '/delete'}" method="post" onsubmit="return confirm('Supprimer cette catégorie ?');">
+              <button class="btn btn-danger" type="submit">Supprimer</button>
+            </form>
+          </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(categories)}">
+          <td colspan="3" class="empty-msg">Aucune catégorie enregistrée.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
 </body>
 </html>

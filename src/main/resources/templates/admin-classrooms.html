@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Gestion des salles</title>
+  <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+
+<header class="govbar">
+  <div class="govbar-inner">
+    <div class="govbar-left">
+      <img class="gov-emblem" th:src="@{/img/emblem-mali.jpeg}" alt="Emblème du Mali">
+      <div class="gov-text">
+        <div class="gov-topline">
+          <span class="mali-flag" aria-hidden="true"></span>
+          <span class="gov-country">République du Mali</span>
+        </div>
+        <div class="gov-title">
+           Administration — Classes d’examen
+        </div>
+      </div>
+    </div>
+    
+  </div>
+  <button id="menuToggle" class="menu-toggle" aria-label="Ouvrir le menu" aria-controls="sidebar" aria-expanded="false">☰</button>
+</header>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="admin-profile">
+      <div class="avatar" aria-hidden="true">ADM</div>
+      <div class="admin-name">@admin</div>
+    </div>
+
+    <nav class="menu">
+         <a class="menu-item active" th:href="@{/admin/tests}">
+        <span class="icon">➕</span>Epreuves
+      </a>
+
+       <a class="menu-item active" th:href="@{/admin/categories}">
+        <span class="icon">➕</span>Categories
+      </a> 
+      <a class="menu-item active" th:href="@{/admin/exams}">
+        <span class="icon">➕</span>Créer un concours
+      </a>
+
+      <a class="menu-item" th:href="@{/admin/centers}">
+        <span class="icon">🏫</span>Centres
+      </a>
+      <a class="menu-item" th:href="@{/admin/classrooms}">
+        <span class="icon">🏷️</span>Salles
+      </a>
+
+       <a class="menu-item" th:href="@{/admin/applications/manage}">
+        <span class="icon">🛠️</span>Gérer les applications
+      </a>
+
+
+      <a class="menu-item" th:href="@{/admin/candidates/manage}">
+        <span class="icon">🛠️</span>Gérer les candidatures
+      </a>
+     
+      <div class="menu-sep"></div>
+      <a class="menu-item danger" th:href="@{/logout}">
+        <span class="icon">🚪</span>Déconnexion
+      </a>
+    </nav>
+  </aside>
+
+<div class="wrap">
+
+  <h1>Gestion des salles</h1>
+
+  <div th:if="${flashSuccess}" class="flash success" th:text="${flashSuccess}"></div>
+  <div th:if="${flashError}"   class="flash error"   th:text="${flashError}"></div>
+
+  <!-- Formulaire création/édition -->
+  <div class="card">
+    <h2>
+      <span th:if="${form != null and form.id != null}">Modifier la salle</span>
+      <span th:if="${form == null or form.id == null}">Créer une salle</span>
+    </h2>
+
+    <!-- Création si pas d’ID, sinon mise à jour -->
+    <form th:action="${form != null and form.id != null} ?
+                      @{'/admin/classrooms/' + ${form.id} + '/update'} :
+                      @{/admin/classrooms/create}"
+          method="post" th:object="${form}">
+      <input type="hidden" th:field="*{id}"/>
+
+      <div class="row">
+        <div>
+          <label for="number">Numéro / Code</label>
+          <input id="number" th:field="*{number}" required placeholder="ex: Salle 12"/>
+          <div th:if="${#fields.hasErrors('number')}" th:errors="*{number}" class="error-msg"></div>
+        </div>
+        <div>
+          <label for="capacity">Capacité</label>
+          <input id="capacity" th:field="*{capacity}" type="number" min="1" required/>
+          <div th:if="${#fields.hasErrors('capacity')}" th:errors="*{capacity}" class="error-msg"></div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label for="centerId">Centre (ID)</label>
+          <select id="centerId" th:field="*{centerId}" required>
+            <option value="" disabled th:selected="${form == null or form.centerId == null}">
+              — choisir un centre —
+            </option>
+            <!-- On n’affiche que l’ID et un libellé simple -->
+            <option th:each="c : ${centers}"
+                    th:value="${c.id}"
+                    th:text="${'Centre #' + c.id + ' — ' + c.name}">
+            </option>
+          </select>
+          <div th:if="${#fields.hasErrors('centerId')}" th:errors="*{centerId}" class="error-msg"></div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn" type="submit">
+          <span th:if="${form != null and form.id != null}">Mettre à jour</span>
+          <span th:if="${form == null or form.id == null}">Créer</span>
+        </button>
+        <a th:if="${form != null and form.id != null}" class="btn-outline" th:href="@{/admin/classrooms}">Annuler</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Liste -->
+  <div class="card">
+    <h3>Liste des salles</h3>
+    <table>
+      <thead>
+        <tr><th>ID</th><th>Numéro</th><th>Capacité</th><th>Centre (ID)</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        <tr th:each="r : ${classrooms}">
+          <td th:text="${r.id}">1</td>
+          <td th:text="${r.number}">Salle 12</td>
+          <td th:text="${r.capacity}">30</td>
+          <!-- Option A : on n’utilise que centerId (pas de centerName/centerLocation) -->
+          <td>
+            <span th:text="${r.centerId}">1</span>
+          </td>
+          <td class="actions">
+            <a class="btn-outline" th:href="@{'/admin/classrooms/' + ${r.id} + '/edit'}">Modifier</a>
+            <form th:action="@{'/admin/classrooms/' + ${r.id} + '/delete'}"
+                  method="post" onsubmit="return confirm('Supprimer cette salle ?');">
+              <button class="btn btn-danger" type="submit">Supprimer</button>
+            </form>
+          </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(classrooms)}">
+          <td colspan="5" class="empty-msg">Aucune salle pour l’instant.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+</body>
+</html>

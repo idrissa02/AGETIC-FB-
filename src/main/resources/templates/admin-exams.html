@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Gestion des concours</title>
+  <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+
+<header class="govbar">
+  <div class="govbar-inner">
+    <div class="govbar-left">
+      <img class="gov-emblem" th:src="@{/img/emblem-mali.jpeg}" alt="Emblème du Mali">
+      <div class="gov-text">
+        <div class="gov-topline">
+          <span class="mali-flag" aria-hidden="true"></span>
+          <span class="gov-country">République du Mali</span>
+        </div>
+        <div class="gov-title">
+          Portail d’Administration — Concours de la Fonction Publique
+        </div>
+      </div>
+    </div>
+    
+  </div>
+  <button id="menuToggle" class="menu-toggle" aria-label="Ouvrir le menu" aria-controls="sidebar" aria-expanded="false">☰</button>
+</header>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="admin-profile">
+      <div class="avatar" aria-hidden="true">ADM</div>
+      <div class="admin-name">@admin</div>
+    </div>
+
+    <nav class="menu">
+         <a class="menu-item active" th:href="@{/admin/tests}">
+        <span class="icon">➕</span>Epreuves
+      </a>
+
+       <a class="menu-item active" th:href="@{/admin/categories}">
+        <span class="icon">➕</span>Categories
+      </a> 
+      <a class="menu-item active" th:href="@{/admin/exams}">
+        <span class="icon">➕</span>Créer un concours
+      </a>
+
+      <a class="menu-item" th:href="@{/admin/centers}">
+        <span class="icon">🏫</span>Centres
+      </a>
+      <a class="menu-item" th:href="@{/admin/classrooms}">
+        <span class="icon">🏷️</span>Salles
+      </a>
+
+       <a class="menu-item" th:href="@{/admin/applications/manage}">
+        <span class="icon">🛠️</span>Gérer les applications
+      </a>
+
+
+      <a class="menu-item" th:href="@{/admin/candidates/manage}">
+        <span class="icon">🛠️</span>Gérer les candidatures
+      </a>
+     
+      <div class="menu-sep"></div>
+      <a class="menu-item danger" th:href="@{/logout}">
+        <span class="icon">🚪</span>Déconnexion
+      </a>
+    </nav>
+  </aside>
+
+<div class="wrap">
+
+  <h1>Gestion des concours</h1>
+
+  <div th:if="${flashSuccess}" class="flash success" th:text="${flashSuccess}"></div>
+  <div th:if="${flashError}"   class="flash error"   th:text="${flashError}"></div>
+
+  <!-- Form create/update -->
+  <div class="card">
+    <h2>
+      <span th:if="${form != null and form.id != null}">Modifier un concours</span>
+      <span th:if="${form == null or form.id == null}">Créer un concours</span>
+    </h2>
+
+    <form th:action="@{${actionUrl}}" method="post" th:object="${form}">
+      <!-- CSRF if Spring Security -->
+      <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+      <input type="hidden" th:field="*{id}"/>
+
+      <label>Titre</label>
+      <input th:field="*{title}" required placeholder="ex: Concours des Attachés d’Administration"/>
+
+      <div class="row">
+        <div>
+          <label>Date du concours</label>
+          <input type="date" th:field="*{date}" required/>
+        </div>
+        <div>
+          <label>Date limite de candidature</label>
+          <input type="date" th:field="*{applicationDeadline}" required/>
+        </div>
+      </div>
+
+      <label>Conditions</label>
+      <textarea th:field="*{condition}" rows="3" placeholder="Diplômes requis, pièces à fournir..."></textarea>
+
+      <div class="row">
+        <div>
+          <label>Quota</label>
+          <input type="number" min="1" th:field="*{quota}" placeholder="ex: 100"/>
+        </div>
+        <div>
+          <label>Durée (heures)</label>
+          <input type="number" min="1" th:field="*{hours}" placeholder="ex: 3"/>
+        </div>
+      </div>
+
+      <label>Catégorie</label>
+      <select th:field="*{categoryId}" required>
+        <option value="" disabled
+                th:selected="${form == null or form.categoryId == null}">— choisir une catégorie —</option>
+        <option th:each="c : ${categories}"
+                th:value="${c.id}"
+                th:text="${c.type}"></option>
+      </select>
+
+      <div class="actions">
+        <button class="btn" type="submit">
+          <span th:if="${form != null and form.id != null}">Mettre à jour</span>
+          <span th:if="${form == null or form.id == null}">Créer</span>
+        </button>
+        <a th:if="${form != null and form.id != null}" class="btn-outline" th:href="@{/admin/exams}">Annuler</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- List -->
+  <div class="card">
+    <h3>Liste des concours</h3>
+    <table>
+      <thead>
+      <tr>
+        <th>ID</th><th>Titre</th><th>Date</th><th>DL Candidature</th><th>Catégorie</th><th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="e : ${exams}">
+        <td th:text="${e.id}">1</td>
+        <td th:text="${e.title}">Titre</td>
+        <td th:text="${e.date}">2025-10-01</td>
+        <td th:text="${e.applicationDeadline}">2025-09-10</td>
+        <td th:text="${e.categoryId}">2</td>
+        <td class="actions">
+          <a class="btn-outline" th:href="@{'/admin/exams/' + ${e.id} + '/edit'}">Modifier</a>
+          <form th:action="@{'/admin/exams/' + ${e.id} + '/delete'}" method="post"
+                onsubmit="return confirm('Supprimer ce concours ?');">
+            <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button class="btn btn-danger" type="submit">Supprimer</button>
+          </form>
+        </td>
+      </tr>
+      <tr th:if="${#lists.isEmpty(exams)}">
+        <td colspan="6" class="empty-msg">Aucun concours pour l’instant.</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+</body>
+</html>

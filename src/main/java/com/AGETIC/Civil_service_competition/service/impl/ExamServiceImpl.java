@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
+import java.util.List;
 
 import com.AGETIC.Civil_service_competition.repository.CategoryRepository; 
 import com.AGETIC.Civil_service_competition.repository.AdminRepository;   
@@ -35,34 +37,54 @@ public class ExamServiceImpl implements ExamService {
         this.adminRepo = adminRepo;
     }
 
+   @Override
+@Transactional
+public ExamResponse create(ExamCreateRequest req) {
+    if (req.categoryId() == null) {
+        throw new IllegalArgumentException("categoryId is required");
+    }
+    // If you require creator tracking:
+    if (req.createdByAdminId() == null) {
+        // Either set from SecurityContext or throw:
+        // throw new IllegalArgumentException("createdByAdminId is required");
+        // OR set a default for now:
+        // createdByAdminId = currentUserId();
+    }
+
+    var category = categoryRepo.findById(req.categoryId())
+        .orElseThrow(() -> new IllegalArgumentException("Category not found: " + req.categoryId()));
+
+    // If you really look up admin:
+    // var admin = adminRepo.findById(req.createdByAdminId())
+    //    .orElseThrow(() -> new IllegalArgumentException("Admin not found: " + req.createdByAdminId()));
+
+    Exam exam = new Exam();
+    exam.setTitle(req.title());
+    exam.setDate(req.date());
+    exam.setApplicationDeadline(req.applicationDeadline());
+    exam.setCondition(req.condition());
+    exam.setQuota(req.quota());
+    exam.setHours(req.hours());
+// or set from security
+
+
+    exam.setCategory(category);
+
+    // ✅ Fetch the Admin
+    Admin admin = adminRepo.findById(req.createdByAdminId())
+            .orElseThrow(() -> new IllegalArgumentException("Admin not found"));
+    exam.setCreatedBy(admin);
+
+    examRepo.save(exam);
+    return toResponse(exam);
+}
+
+
     @Override
-    public ExamResponse create(ExamCreateRequest req) {
-    
-
-        validateDates(req.applicationDeadline(), req.date());
-
-        Category cat = categoryRepo.findById(req.categoryId())
-                .orElseThrow(() -> new RuntimeException("Category not found"));
-        Admin admin = adminRepo.findById(req.createdByAdminId())
-                .orElseThrow(() -> new RuntimeException("Admin not found"));
-
-        if (examRepo.existsByTitleAndDate(req.title(), req.date())) {
-            throw new RuntimeException("Exam with same title and date already exists");
-        }
-
-        Exam e = new Exam();
-        e.setTitle(req.title());
-        e.setDate(req.date());
-        e.setApplicationDeadline(req.applicationDeadline());
-        e.setCondition(req.condition());
-        e.setQuota(req.quota());
-        e.setHours(req.hours());
-        e.setCategory(cat);
-        e.setCreatedBy(admin);
-        e.setCreatedAt(LocalDateTime.now());
-
-        examRepo.save(e);
-        return toResponse(e);
+    public List<ExamResponse> getAllExams() {
+        return examRepo.findAll().stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
     }
 
     @Override
