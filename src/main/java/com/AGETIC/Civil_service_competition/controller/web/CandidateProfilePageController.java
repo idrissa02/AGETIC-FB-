@@ -2,10 +2,13 @@ package com.AGETIC.Civil_service_competition.controller.web;
 
 import com.AGETIC.Civil_service_competition.dto.CandidateProfileResponse;
 import com.AGETIC.Civil_service_competition.service.CandidateService;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import com.AGETIC.Civil_service_competition.repository.CandidateRepository;
 
 /**
  * Thin MVC controller that calls your existing REST/service methods and renders
@@ -15,9 +18,11 @@ import org.springframework.web.bind.annotation.*;
 public class CandidateProfilePageController {
 
     private final CandidateService candidateService;
+    private final CandidateRepository candidateRepo;
 
-    public CandidateProfilePageController(CandidateService candidateService) {
+    public CandidateProfilePageController(CandidateService candidateService,CandidateRepository candidateRepo) {
         this.candidateService = candidateService;
+        this.candidateRepo = candidateRepo;
     }
 
     /**
@@ -42,10 +47,17 @@ public class CandidateProfilePageController {
     @GetMapping("/{candidateNumber}/profile")
     public String publicCandidateProfile(@PathVariable String candidateNumber, Model model) {
         CandidateProfileResponse res = candidateService.viewByCandidateNumber(candidateNumber);
-        if (res != null) {
+         if (res == null) {
+            // Could be either "not found" OR "not yet published"
+            boolean exists = candidateRepo.existsByCandidateNumber(candidateNumber);
+            if (exists) {
+                model.addAttribute("notPublished", true);
+            } else {
+                model.addAttribute("notFound", true);
+            }
+        } else {
             model.addAttribute("profile", res);
         }
-        model.addAttribute("showResults", true);
         return "resultats"; // reuse the results.html template
     }
 

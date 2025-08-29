@@ -592,7 +592,9 @@ input {
 
 .empty {
   padding: 16px;
-  color: var(--muted)
+  color: var(--muted);
+
+  
 }
 
 /* Table */

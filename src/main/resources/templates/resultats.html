@@ -26,12 +26,16 @@
       <div th:replace="~{fragments/profile :: profileView(${profile},true)}"></div>
     </div>
 
-
-    <!-- État vide / message d’erreur -->
-    <div class="empty" th:if="${profile == null and param.candidateNumber != null}">
-      Aucun résultat trouvé pour ce numéro candidat, ou les résultats ne sont pas encore publiés.
+    <!-- Candidat trouvé mais résultats pas encore publiés -->
+    <div class="empty" th:if="${notPublished}">
+      Les résultats pour ce candidat ne sont pas encore publiés.
     </div>
-   
+
+    <!-- Aucun candidat trouvé -->
+    <div class="empty" th:if="${notFound}">
+      Entrez un numéro de candidat valide ! 
+    </div>
+
   </main>
 
   <footer th:replace="~{fragments/footer :: siteFooter}"></footer>
