@@ -1,23 +1,30 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <title>Profil candidat (fragment)</title>
+</head>
 <body>
-  <section th:fragment="profileView(profile)" class="profile">
-    <!-- Header -->
+
+  <!-- Fragment: profileView(profile, showResults) -->
+  <section th:fragment="profileView(profile, showResults)" class="profile">
+
+    <!-- ===== Header ===== -->
     <div class="profile-head">
       <div class="ph-left">
-        <h3 th:text="${profile.examTitle}">Titre du concours</h3>
-        <div class="muted">Examen le
+        <h3 th:text="${profile.examTitle != null ? profile.examTitle : 'Candidature'}">Candidature</h3>
+        <div class="muted" th:if="${profile.examDate != null}">
+          Examen le
           <strong th:text="${#temporals.format(profile.examDate, 'dd/MM/yyyy')}">15/09/2025</strong>
         </div>
       </div>
+
       <div class="ph-right">
         <span class="status-badge"
               th:text="${profile.status}"
-              th:classappend="' status-' + ${#strings.toLowerCase(profile.status)}">
-          ADMITTED
-        </span>
+              th:classappend="' status-' + ${#strings.toLowerCase(profile.status)}">PENDING</span>
 
-        <!-- Show Attestation button when ADMITTED -->
+        <!-- Attestation visible seulement si ADMITTED -->
         <a th:if="${profile.status == 'ADMITTED'}"
            class="btn-primary btn-attestation"
            th:href="@{'/attestations/' + ${profile.applicationId}}"
@@ -27,71 +34,88 @@
       </div>
     </div>
 
-    <!-- Candidate -->
+    <!-- ===== Infos Candidat / Candidature ===== -->
     <div class="profile-grid">
+      <!-- Identité -->
       <div class="card">
         <h4>Identité</h4>
         <ul class="def">
           <li><span>Numéro candidat</span>
-              <strong th:text="${profile.candidateNumber != null ? profile.candidateNumber : '—'}">CND-…</strong></li>
-          <li><span>NINA</span> <strong th:text="${profile.ninaMasked}">NINA••••1234</strong></li>
-          <li><span>Nom</span> <strong th:text="${profile.surname}">Traoré</strong></li>
-          <li><span>Prénom</span> <strong th:text="${profile.name}">Awa</strong></li>
-          <li><span>Email</span> <strong th:text="${profile.emailMasked}">awa•••@mail.com</strong></li>
-          <li><span>Téléphone</span> <strong th:text="${profile.phoneMasked}">+223•••00</strong></li>
-          <li><span>Date de naissance</span>
-              <strong th:text="${#temporals.format(profile.birthDate,'dd/MM/yyyy')}">02/04/1995</strong></li>
+              <strong th:text="${profile.candidateNumber != null ? profile.candidateNumber : '—'}">—</strong></li>
+          <li><span>NINA</span>
+              <strong th:text="${profile.ninaMasked != null ? profile.ninaMasked : '—'}">—</strong></li>
+          <li><span>Nom</span> <strong th:text="${profile.surname}">—</strong></li>
+          <li><span>Prénom</span> <strong th:text="${profile.name}">—</strong></li>
+          <li><span>Email</span>
+              <strong th:text="${profile.emailMasked != null ? profile.emailMasked : '—'}">—</strong></li>
+          <li><span>Téléphone</span>
+              <strong th:text="${profile.phoneMasked != null ? profile.phoneMasked : '—'}">—</strong></li>
+          <li th:if="${profile.birthDate != null}">
+            <span>Date de naissance</span>
+            <strong th:text="${#temporals.format(profile.birthDate,'dd/MM/yyyy')}">—</strong>
+          </li>
         </ul>
       </div>
 
+      <!-- Candidature / Concours -->
       <div class="card">
-        <h4>Concours</h4>
+        <h4>Informations du concours</h4>
         <ul class="def">
-          <li><span>ID candidature</span> <strong th:text="${profile.applicationId}">123</strong></li>
-          <li><span>ID concours</span> <strong th:text="${profile.examId != null ? profile.examId : '—'}">88</strong></li>
-          <li><span>Date de l'examen</span>
-              <strong th:text="${#temporals.format(profile.examDate,'dd/MM/yyyy')}">15/09/2025</strong></li>
+          <li><span>Numéro d’application</span>
+              <strong th:text="${profile.applicationId}">—</strong></li>
+          <li><span>Concours</span>
+              <strong th:text="${profile.examTitle != null ? profile.examTitle : '—'}">—</strong></li>
+          <li th:if="${profile.examDate != null}">
+            <span>Date de l'examen</span>
+            <strong th:text="${#temporals.format(profile.examDate,'dd/MM/yyyy')}">—</strong>
+          </li>
         </ul>
       </div>
     </div>
 
-    <!-- Scores -->
-    <div class="card" th:if="${profile.finalScore != null or !#lists.isEmpty(profile.grades)}">
+    <!-- ===== Résultats (uniquement pour la vue “résultats”) ===== -->
+    <div class="card"
+         th:if="${showResults and (profile.finalScore != null
+                 or (profile.grades != null and !#lists.isEmpty(profile.grades))
+                 or (profile.tests  != null and !#lists.isEmpty(profile.tests)))}">
       <div class="scores-head">
         <h4>Résultats</h4>
         <div class="final-score" th:if="${profile.finalScore != null}">
-          Note finale : <strong th:text="${#numbers.formatDecimal(profile.finalScore, 1, 'COMMA', 2, 'POINT')}">13,25</strong>
+          Note finale :
+          <strong th:text="${#numbers.formatDecimal(profile.finalScore, 1, 'COMMA', 2, 'POINT')}">0,00</strong>
         </div>
       </div>
 
       <div class="scores-grid">
-        <div>
+        <div th:if="${profile.tests != null and !#lists.isEmpty(profile.tests)}">
           <h5>Épreuves</h5>
           <ul class="bullets">
-            <li th:each="t : ${profile.tests}" th:text="${t.title}">Mathématiques</li>
+            <li th:each="t : ${profile.tests}" th:text="${t.title}">Épreuve</li>
           </ul>
         </div>
-        <div>
+
+        <div th:if="${profile.grades != null and !#lists.isEmpty(profile.grades)}">
           <h5>Notes</h5>
           <ul class="bullets">
             <li th:each="g : ${profile.grades}">
-              <span th:text="${g.testId}">1</span> :
-              <strong th:text="${#numbers.formatDecimal(g.score,1,'COMMA',2,'POINT')}">14,50</strong>
-              <small class="muted"
-                    th:if="${g.correctionReason != null}"
-                    th:text="'(' + ${g.correctionReason} + ')'">
-                (Rectification…)
-              </small>
+              <!-- <span th:text="${g.testId}">#</span> : -->
+              <strong th:text="${#numbers.formatDecimal(g.score,1,'COMMA',2,'POINT')}">0,00</strong>
+              <small class="muted" th:if="${g.correctionReason != null}"
+                    th:text="'(' + ${g.correctionReason} + ')'">(Rectification)</small>
             </li>
           </ul>
         </div>
       </div>
     </div>
 
-    <!-- Pending -->
-    <div class="card" th:if="${profile.finalScore == null and #lists.isEmpty(profile.grades)}">
+    <!-- Message d’attente (seulement en vue “résultats”) -->
+    <div class="card"
+         th:if="${showResults
+                 and profile.finalScore == null
+                 and (profile.grades == null or #lists.isEmpty(profile.grades))}">
       <p>Résultats en préparation. Revenez plus tard.</p>
     </div>
+
   </section>
 </body>
 </html>

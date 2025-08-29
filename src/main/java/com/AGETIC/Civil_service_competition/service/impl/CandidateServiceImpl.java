@@ -22,26 +22,21 @@ import org.springframework.stereotype.Service;
 
 import com.AGETIC.Civil_service_competition.dto.TestMiniResponse;
 
-
-
 @Service
 @Transactional
 public class CandidateServiceImpl implements CandidateService {
 
     private final CandidateRepository candidateRepo;
-        private final ApplicationRepository applicationRepo;
+    private final ApplicationRepository applicationRepo;
     private final GradeRepository gradeRepo;
 
-
     public CandidateServiceImpl(CandidateRepository candidateRepo,
-                                ApplicationRepository applicationRepo,
-                                GradeRepository gradeRepo) {
+            ApplicationRepository applicationRepo,
+            GradeRepository gradeRepo) {
         this.candidateRepo = candidateRepo;
         this.applicationRepo = applicationRepo;
         this.gradeRepo = gradeRepo;
     }
-
-
 
     @Override
     public CandidateResponse getByCandidateNumber(String candidateNumber) {
@@ -75,7 +70,9 @@ public class CandidateServiceImpl implements CandidateService {
     @Override
     public CandidateProfileResponse viewByApplicationId(Long applicationId) {
         Application app = applicationRepo.findById(applicationId).orElse(null);
-        if (app == null) return null;
+        if (app == null) {
+            return null;
+        }
 
         boolean accepted = "ACCEPTED".equals(app.getStatus().name());
         Exam exam = accepted ? app.getExam() : null;
@@ -85,7 +82,7 @@ public class CandidateServiceImpl implements CandidateService {
         return new CandidateProfileResponse(
                 app.getId(),
                 app.getStatus().name(),
-                candidateNumber,                         // only if accepted
+                candidateNumber, // only if accepted
                 maskMiddle(app.getNinaNumber()),
                 app.getName(),
                 app.getSurname(),
@@ -93,11 +90,12 @@ public class CandidateServiceImpl implements CandidateService {
                 maskPhone(app.getPhone()),
                 app.getBirthDate(),
 
-                // exam info only when accepted
-                accepted ? exam.getId() : null,
-                accepted ? exam.getTitle() : null,
-                accepted ? exam.getDate() : null,
+                // exam info ALWAYS included
+                app.getExam() != null ? app.getExam().getId() : null,
+                app.getExam() != null ? app.getExam().getTitle() : null,
+                app.getExam() != null ? app.getExam().getDate() : null,
 
+                
                 // no tests/grades/finalScore in this view
                 List.of(),
                 List.of(),
@@ -105,14 +103,15 @@ public class CandidateServiceImpl implements CandidateService {
         );
     }
 
-
     // --- VIEW 2: by candidateNumber ---
     // Only possible if results are announced (exam.resultsPublished == true).
     // Returns ALL infos + tests + grades + final score.
     @Override
     public CandidateProfileResponse viewByCandidateNumber(String candidateNumber) {
         Candidate cand = candidateRepo.findByCandidateNumber(candidateNumber).orElse(null);
-        if (cand == null) return null;
+        if (cand == null) {
+            return null;
+        }
 
         Application app = cand.getApplication();
         Exam exam = app.getExam();
@@ -125,14 +124,14 @@ public class CandidateServiceImpl implements CandidateService {
         var gradeList = gradeRepo.findByCandidateId(cand.getId());
         var grades = gradeList.stream()
                 .map(g -> new GradeResponse(
-                        g.getCandidate().getId(),
-                        g.getTest().getId(),
-                        g.getScore(),
-                        g.getGradedAt(),
-                        g.getUpdatedAt(),
-                        g.getCorrectionReason(),
-                        g.getGradedBy() != null ? g.getGradedBy().getId() : null
-                )).toList();
+                g.getCandidate().getId(),
+                g.getTest().getId(),
+                g.getScore(),
+                g.getGradedAt(),
+                g.getUpdatedAt(),
+                g.getCorrectionReason(),
+                g.getGradedBy() != null ? g.getGradedBy().getId() : null
+        )).toList();
 
         Double finalScore = gradeList.isEmpty()
                 ? null
@@ -161,7 +160,10 @@ public class CandidateServiceImpl implements CandidateService {
         );
     }
 
-    // ---- helpers
+
+
+    
+    // ---- helpers -------------
     private CandidateResponse toResponse(Candidate c) {
         return new CandidateResponse(
                 c.getId(),
@@ -171,22 +173,32 @@ public class CandidateServiceImpl implements CandidateService {
         );
     }
 
-      // ---- masking helpers ----
+    // ---- masking helpers ----
     private String maskMiddle(String v) {
-        if (v == null || v.length() <= 4) return v;
+        if (v == null || v.length() <= 4) {
+            return v;
+        }
         int keep = Math.min(2, v.length());
         int tail = Math.min(2, v.length() - keep);
         return v.substring(0, keep) + "*".repeat(Math.max(0, v.length() - keep - tail)) + v.substring(v.length() - tail);
     }
+
     private String maskEmail(String email) {
-        if (email == null || !email.contains("@")) return email;
+        if (email == null || !email.contains("@")) {
+            return email;
+        }
         var parts = email.split("@", 2);
         var local = parts[0];
-        if (local.length() <= 2) return "**@" + parts[1];
+        if (local.length() <= 2) {
+            return "**@" + parts[1];
+        }
         return local.substring(0, 2) + "**@" + parts[1];
     }
+
     private String maskPhone(String p) {
-        if (p == null || p.length() < 3) return p;
+        if (p == null || p.length() < 3) {
+            return p;
+        }
         return p.substring(0, 2) + "*".repeat(p.length() - 4) + p.substring(p.length() - 2);
     }
 

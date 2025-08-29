@@ -494,7 +494,8 @@ body {
   background: var(--card);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 16px
+  padding: 16px;
+  margin-bottom: 5px;
 }
 
 .def {

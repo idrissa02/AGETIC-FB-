@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.AGETIC.Civil_service_competition.model.Candidate;
 
@@ -16,6 +18,8 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long> {
     Optional<Candidate> findByApplicationId(Long applicationId);
 
     List<Candidate> findAllByApplication_Exam_Id(Long examId);
+
+    
 
    
 }

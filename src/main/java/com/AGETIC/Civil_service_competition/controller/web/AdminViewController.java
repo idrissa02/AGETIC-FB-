@@ -1,4 +1,4 @@
-package com.AGETIC.Civil_service_competition.controller;
+package com.AGETIC.Civil_service_competition.controller.web;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

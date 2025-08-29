@@ -40,7 +40,7 @@ public class ExamController {
         return service.searchByTitle(q, pageable);
     }
 
-    // ----- Admin -----
+    // ----- Admin ------
 
     @PostMapping
     public ResponseEntity<ExamResponse> create(@RequestBody ExamCreateRequest req) {

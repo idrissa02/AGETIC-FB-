@@ -32,7 +32,6 @@ public class CandidateController {
     }
 
 
-
     
     // Admin: set final status (only if you keep manual override)
 //     @PatchMapping("/{candidateNumber}/status")
@@ -41,4 +40,6 @@ public class CandidateController {
 //         CandidateResponse res = service.setStatus(candidateNumber, status);
 //         return res == null ? ResponseEntity.badRequest().build() : ResponseEntity.ok(res);
 //     }
- }
+
+
+}

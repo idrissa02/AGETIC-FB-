@@ -1,26 +1,40 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
 <head>
   <meta charset="utf-8" />
-  <title>Résultats</title>
+  <title>Voir mes résultats</title>
   <link rel="stylesheet" th:href="@{/css/app.css}" />
 </head>
+
 <body>
   <header th:replace="~{fragments/header :: siteHeader}"></header>
 
   <main class="container">
-    <h2>Voir les résultats</h2>
+    <h2>Voir mes résultats</h2>
 
-    <!-- Ask for applicationId; server loads CandidateProfileResponse -->
-    <form class="lookup-form" method="get" th:action="@{/resultats}">
-      <label for="appId">ID de candidature</label>
-      <input id="appId" name="applicationId" type="number" th:value="${param.applicationId}" required />
+    <!-- Recherche par numéro candidat -->
+    <form class="lookup-form" method="get" th:action="@{/candidats/search}">
+      <label for="cand">Numéro candidat</label>
+      <input id="cand" name="candidateNumber" type="text" placeholder="Ex: CND-2025-00045"
+        th:value="${param.candidateNumber}" required />
       <button class="btn-primary" type="submit">Afficher</button>
     </form>
 
-    <!-- Reuse the same fragment as dossier -->
-    <!-- <div th:if="${profile != null}" th:replace="~{fragments/profile :: profileView(${profile})}"></div> -->
+    <!-- Profil + résultats (le fragment sait afficher notes/tests/pending) -->
+    <div th:if="${profile != null}">
+      <div th:replace="~{fragments/profile :: profileView(${profile},true)}"></div>
+    </div>
+
+
+    <!-- État vide / message d’erreur -->
+    <div class="empty" th:if="${profile == null and param.candidateNumber != null}">
+      Aucun résultat trouvé pour ce numéro candidat, ou les résultats ne sont pas encore publiés.
+    </div>
+   
   </main>
+
+  <footer th:replace="~{fragments/footer :: siteFooter}"></footer>
 </body>
-   <footer th:replace="~{fragments/footer :: siteFooter}"></footer>
+
 </html>

@@ -1,4 +1,4 @@
-package com.AGETIC.Civil_service_competition.controller;
+package com.AGETIC.Civil_service_competition.controller.web;
 
 import com.AGETIC.Civil_service_competition.dto.ApplicationCreateRequest;
 import com.AGETIC.Civil_service_competition.dto.ApplicationResponse;
@@ -36,8 +36,8 @@ public class ApplyController {
     /** Handle submit, save to DB, upload files, then redirect to success */
     @PostMapping("/submit")
     public String submit(@ModelAttribute ApplicationCreateRequest req,
-                         @RequestParam(value = "picture", required = false) MultipartFile picture,
-                         @RequestParam(value = "documents", required = false) MultipartFile documents, Model model) throws Exception {
+                         @RequestParam(value = "picture", required = true) MultipartFile picture,
+                         @RequestParam(value = "documents", required = true) MultipartFile documents, Model model) throws Exception {
 try{
     ApplicationResponse res = applicationService.create(req);              // save application
         if ((picture != null && !picture.isEmpty()) || (documents != null && !documents.isEmpty())) {

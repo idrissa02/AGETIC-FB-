@@ -11,20 +11,23 @@
   <main class="container">
     <h2>Mon dossier</h2>
 
-    <!-- Small helper: search by candidateNumber -->
+    <!-- Lookup form: search by applicationId -->
+    <form class="lookup-form" method="get" th:action="@{/applications/search}">
+      <label for="appId">Numéro d'Application</label>
+      <input id="appId" name="applicationId" type="text" placeholder="Ex: APP 123" required />
+      <button type="submit" class="btn-primary">Chercher</button>
+    </form>
 
-      
-      <form class="lookup-form" method="get" >
-        <label>Numéro candidat</label>
-        <input name="candidateNumber" type="text" placeholder="Ex: CND-2025-00045" required />
-        <button class="btn-primary" type="submit">Chercher</button>
-      </form>
-    
-
+    <!-- Show profile if present -->
+  <div th:if="${profile != null}">
+  <div th:replace="~{fragments/profile :: profileView(${profile},false)}"></div>
+</div>
+    <!-- Optional: empty state -->
+    <div th:if="${profile == null}" class="empty">
+      Entrez un numéro d'application pour voir votre dossier.
+    </div>
   </main>
 
-
+  <footer th:replace="~{fragments/footer :: siteFooter}"></footer>
 </body>
-
-   <footer th:replace="~{fragments/footer :: siteFooter}"></footer>
 </html>

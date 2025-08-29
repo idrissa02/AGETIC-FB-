@@ -82,7 +82,7 @@ document.getElementById("applicationForm").addEventListener("submit", async (e) 
     });
     if (!up.ok) {
       const t = await up.text();
-      throw new Error(t || "Échec de l’envoi des pièces justificatives.");
+      throw new Error(t || "Échec de l'envoi des pièces justificatives.");
     }
   }
 

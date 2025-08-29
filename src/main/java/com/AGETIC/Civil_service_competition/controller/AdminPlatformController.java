@@ -2,7 +2,11 @@
 package com.AGETIC.Civil_service_competition.controller;
 
 import com.AGETIC.Civil_service_competition.dto.*;
+import com.AGETIC.Civil_service_competition.model.Candidate;
+import com.AGETIC.Civil_service_competition.repository.CandidateRepository;
 import com.AGETIC.Civil_service_competition.service.AdminPlatformService;
+import com.AGETIC.Civil_service_competition.service.CandidateService;
+
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,9 +17,13 @@ import java.util.List;
 public class AdminPlatformController {
 
     private final AdminPlatformService service;
+    private final CandidateService candidateService;
+    private final CandidateRepository candidateRepository;
 
-    public AdminPlatformController(AdminPlatformService service) {
+    public AdminPlatformController(AdminPlatformService service,CandidateService candidateService,CandidateRepository candidateRepository) {
         this.service = service;
+        this.candidateRepository = candidateRepository;
+        this.candidateService = candidateService;
     }
 
     // ================= EXAMS =================
@@ -53,7 +61,9 @@ public class AdminPlatformController {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.addTests(examId, req));
     }
 
+
     // ================= GRADING =================
+
     @PostMapping("/grades")
     public ResponseEntity<GradeResponse> gradeCandidate(@RequestBody AdminGradeRequest req) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.gradeCandidate(req));
@@ -67,6 +77,21 @@ public class AdminPlatformController {
     @GetMapping("/grades/exams/{examId}")
     public ResponseEntity<List<GradeResponse>> listGradesByExam(@PathVariable Long examId) {
         return ResponseEntity.ok(service.listGradesByExam(examId));
+    }
+
+    /**
+     * 3) Recompute finalScore + status for ALL candidates of an exam (bulk).
+     *    Tip: call this after publishing results or after importing grades.
+     */
+    @PatchMapping("/exams/{examId}/recompute-admissions")
+    public ResponseEntity<Void> recomputeForExam(@PathVariable Long examId) {
+        // Fetch minimal list of candidates for this exam (repo method below)
+        List<Candidate> candidates = candidateRepository.findAllByApplication_Exam_Id(examId);
+        if (candidates.isEmpty()) return ResponseEntity.noContent().build();
+        for (Candidate c : candidates) {
+            candidateService.autoUpdateStatus(c.getId());
+        }
+        return ResponseEntity.noContent().build();
     }
 
 

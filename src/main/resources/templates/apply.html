@@ -86,10 +86,10 @@
 
       <div class="uploads">
         <div class="upload-tile">
-          <h4>Photo d’identité</h4>
+          <h4>Photo d'identité</h4>
           <p>Glissez-déposez un fichier ou cliquez pour choisir.</p>
           <div class="row-actions">
-            <input type="file" id="picture" name="picture" accept="image/*" />
+            <input type="file" id="picture" name="picture" accept="image/*" required/>
             <span class="note">PNG/JPG, ≤ 5 Mo</span>
           </div>
         </div>
@@ -98,7 +98,7 @@
           <h4>Documents justificatifs</h4>
           <p>CV, diplômes, CIN… (un seul PDF ou un ZIP).</p>
           <div class="row-actions">
-            <input type="file" id="documents" name="documents" accept=".pdf,.zip" />
+            <input type="file" id="documents" name="documents" accept=".pdf,.zip" required />
             <span class="note">PDF/ZIP, ≤ 10 Mo</span>
           </div>
         </div>
@@ -106,7 +106,7 @@
 
       <label class="consent">
         <input type="checkbox" id="confirmAccuracy" required />
-        <span>J’atteste l’exactitude des informations fournies.</span>
+        <span>J'atteste l'exactitude des informations fournies.</span>
       </label>
 
       <button class="btn" type="submit">Soumettre ma candidature</button>

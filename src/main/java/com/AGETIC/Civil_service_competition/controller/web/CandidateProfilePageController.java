@@ -1,6 +1,5 @@
 package com.AGETIC.Civil_service_competition.controller.web;
 
-
 import com.AGETIC.Civil_service_competition.dto.CandidateProfileResponse;
 import com.AGETIC.Civil_service_competition.service.CandidateService;
 import org.springframework.http.ResponseEntity;
@@ -9,21 +8,21 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Thin MVC controller that calls your existing REST/service methods and
- * renders Thymeleaf views for dossier/resultats pages.
+ * Thin MVC controller that calls your existing REST/service methods and renders
+ * Thymeleaf views for dossier/resultats pages.
  */
 @Controller
-public class  CandidateProfilePageController {
+public class CandidateProfilePageController {
 
     private final CandidateService candidateService;
 
-    public  CandidateProfilePageController(CandidateService candidateService) {
+    public CandidateProfilePageController(CandidateService candidateService) {
         this.candidateService = candidateService;
     }
 
     /**
-     * Dossier by applicationId – renders dossier.html with "profile"
-     * Uses your existing service: candidateService.viewByApplicationId(applicationId)
+     * Dossier by applicationId – renders dossier.html with "profile" Uses your
+     * existing service: candidateService.viewByApplicationId(applicationId)
      */
     @GetMapping("/applications/{applicationId}/profile")
     public String applicationProfile(@PathVariable Long applicationId, Model model) {
@@ -36,8 +35,9 @@ public class  CandidateProfilePageController {
     }
 
     /**
-     * Dossier by candidateNumber (public) – only if results published (enforced in service)
-     * Uses your existing service: service.viewByCandidateNumber(candidateNumber)
+     * Dossier by candidateNumber (public) – only if results published (enforced
+     * in service) Uses your existing service:
+     * service.viewByCandidateNumber(candidateNumber)
      */
     @GetMapping("/{candidateNumber}/profile")
     public String publicCandidateProfile(@PathVariable String candidateNumber, Model model) {
@@ -45,8 +45,11 @@ public class  CandidateProfilePageController {
         if (res != null) {
             model.addAttribute("profile", res);
         }
-        return "dossier";
+        model.addAttribute("showResults", true);
+        return "resultats"; // reuse the results.html template
     }
+
+    //================================  Helpers  ==========================================
 
     /**
      * Small helper form handler from dossier.html (search by applicationId)
@@ -70,18 +73,19 @@ public class  CandidateProfilePageController {
      * Results page posts/gets an applicationId and reuses the dossier fragment.
      * Route: /resultats?applicationId=...
      */
-    @GetMapping("/resultats/view")
-    public String showResults(@RequestParam Long applicationId, Model model) {
-        CandidateProfileResponse res = candidateService.viewByApplicationId(applicationId);
-        if (res != null) {
-            model.addAttribute("profile", res);
-        }
-        return "resultats";
-    }
+    // @GetMapping("/resultats/view")
+    // public String showResults(@RequestParam Long applicationId, Model model) {
+    //     CandidateProfileResponse res = candidateService.viewByApplicationId(applicationId);
+    //     if (res != null) {
+    //         model.addAttribute("profile", res);
+    //     }
+    //     return "resultats";
+    // }
 
     /**
-     * Optional: attestation download passthrough if you later expose a generator endpoint.
-     * For now, this could 302 to a file or be implemented later.
+     * Optional: attestation download passthrough if you later expose a
+     * generator endpoint. For now, this could 302 to a file or be implemented
+     * later.
      */
     @GetMapping("/attestations/{applicationId}")
     public ResponseEntity<Void> downloadAttestation(@PathVariable Long applicationId) {

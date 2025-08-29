@@ -7,7 +7,7 @@ import java.util.List;
 public record CandidateProfileResponse(
 
     
-     Long applicationId,
+        Long applicationId,
         String status,                 // PENDING / REFUSED / ACCEPTED / ADMITTED / NOT_ADMITTED
         String candidateNumber,        // null unless accepted
         String ninaMasked,
